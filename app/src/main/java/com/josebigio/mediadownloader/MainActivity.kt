@@ -29,8 +29,7 @@ class MainActivity : AppCompatActivity() {
         MediaApplication.networkComponent.inject(this)
 
 
-        val fragmentManager = fragmentManager
-        fragmentManager.beginTransaction().add(R.id.fragmentContainer,SearchFragment()).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragmentContainer,SearchFragment()).commit()
         downloadButton.setOnClickListener { startDownload() }
         api.searchVideo("Funny dogs")
                 .subscribeOn(Schedulers.io())

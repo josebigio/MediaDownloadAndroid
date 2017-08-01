@@ -54,9 +54,14 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.10'
     provided 'org.glassfish:javax.annotation:10.0-b28'
 
+    //Images
+    compile 'com.facebook.fresco:fresco:1.4.0'
 
 
 
+
+
+    implementation 'com.android.support:recyclerview-v7:26.0.0-beta1'
 }
 
 buildscript {
