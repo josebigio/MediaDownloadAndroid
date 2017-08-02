@@ -26,55 +26,45 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        MediaApplication.networkComponent.inject(this)
-
-
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer,SearchFragment()).commit()
-        downloadButton.setOnClickListener { startDownload() }
-        api.searchVideo("Funny dogs")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { response ->
-                    Timber.d(response.toString())
-                }
 
     }
 
-    private fun startDownload() {
+//    private fun startDownload() {
+//
+//        if(TextUtils.isEmpty(editText.text)) {
+//            return
+//        }
+//        dialog.isIndeterminate = false
+//        dialog.max = 100
+//        dialog.visibility = View.VISIBLE
+//        val intent = Intent(this, DownloadService::class.java)
+//        intent.putExtra("videoId", editText.text.toString())
+//        intent.putExtra("receiver", DownloadReceiver(Handler()))
+//        startService(intent)
+//    }
 
-        if(TextUtils.isEmpty(editText.text)) {
-            return
-        }
-        dialog.isIndeterminate = false
-        dialog.max = 100
-        dialog.visibility = View.VISIBLE
-        val intent = Intent(this, DownloadService::class.java)
-        intent.putExtra("videoId", editText.text.toString())
-        intent.putExtra("receiver", DownloadReceiver(Handler()))
-        startService(intent)
-    }
 
-
-    private inner class DownloadReceiver(handler: Handler) : ResultReceiver(handler) {
-
-        override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
-            super.onReceiveResult(resultCode, resultData)
-            if (resultCode == DownloadService.UPDATE_PROGRESS) {
-                resultData?:return
-                val progress = resultData.getInt("progress")
-                dialog.progress = progress
-                if (progress == 100) {
-                    dialog.visibility = View.GONE
-                    Toast.makeText(this@MainActivity, "DOWNLOAD DONE", Toast.LENGTH_LONG).show()
-                }
-            }
-            else if(resultCode == DownloadService.DOWNLOAD_STARTED) {
-                //dialog.isIndeterminate = false
-                dialog.progress = 0
-                Toast.makeText(this@MainActivity, "DOWNLOAD STARTED", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+//    private inner class DownloadReceiver(handler: Handler) : ResultReceiver(handler) {
+//
+//        override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+//            super.onReceiveResult(resultCode, resultData)
+//            if (resultCode == DownloadService.UPDATE_PROGRESS) {
+//                resultData?:return
+//                val progress = resultData.getInt("progress")
+//                dialog.progress = progress
+//                if (progress == 100) {
+//                    dialog.visibility = View.GONE
+//                    Toast.makeText(this@MainActivity, "DOWNLOAD DONE", Toast.LENGTH_LONG).show()
+//                }
+//            }
+//            else if(resultCode == DownloadService.DOWNLOAD_STARTED) {
+//                //dialog.isIndeterminate = false
+//                dialog.progress = 0
+//                Toast.makeText(this@MainActivity, "DOWNLOAD STARTED", Toast.LENGTH_LONG).show()
+//            }
+//        }
+//    }
 
 
 }
