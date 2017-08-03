@@ -10,14 +10,12 @@ import kotlinx.android.synthetic.main.search_cell.view.*
 /**
  * Created by josebigio on 7/31/17.
  */
-class SearchAdapter: RecyclerView.Adapter<SearchViewHolder>() {
+class SearchAdapter(val delegate:SearchAdapterDelegate) : RecyclerView.Adapter<SearchViewHolder>() {
 
     var dataSet = ArrayList<SearchItem>()
 
     override fun onBindViewHolder(holder: SearchViewHolder?, position: Int) {
-        val searchItem = dataSet[position]
-        holder!!.itemView.searchTextView.text = searchItem.title
-        holder.itemView.searchThumbnailImage.setImageURI(searchItem.url)
+        holder!!.bind((dataSet[position]), View.OnClickListener { delegate.onItemClick(dataSet[position]) })
     }
 
     override fun getItemCount(): Int {
@@ -30,6 +28,17 @@ class SearchAdapter: RecyclerView.Adapter<SearchViewHolder>() {
 
 }
 
-class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    fun bind(searchItem: SearchItem, onClickListener: View.OnClickListener) {
+        itemView.searchTextView.text = searchItem.title
+        itemView.searchThumbnailImage.setImageURI(searchItem.url)
+        itemView.setOnClickListener(onClickListener)
+    }
+}
 
 data class SearchItem(val title: String, val url: String)
+
+interface SearchAdapterDelegate {
+    fun onItemClick(searchItem: SearchItem)
+}

@@ -1,14 +1,5 @@
 package com.josebigio.mediadownloader.managers
 
-import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import android.os.ResultReceiver
-import io.reactivex.Observable
-import android.os.SystemClock
-import android.util.Log
-import com.josebigio.mediadownloader.MainActivity
 import com.josebigio.mediadownloader.services.DownloadService
 
 

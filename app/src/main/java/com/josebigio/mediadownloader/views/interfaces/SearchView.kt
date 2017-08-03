@@ -9,5 +9,6 @@ import java.util.*
 interface SearchView {
 
     fun render(dataSet: ArrayList<SearchItem>)
+    fun showLoading(show:Boolean)
 
 }
