@@ -10,5 +10,6 @@ interface SearchView {
 
     fun render(dataSet: ArrayList<SearchItem>)
     fun showLoading(show:Boolean)
+    fun navigateToDetails(id:String)
 
 }

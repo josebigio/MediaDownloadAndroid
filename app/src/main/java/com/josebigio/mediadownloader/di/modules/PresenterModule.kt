@@ -3,6 +3,7 @@ package com.josebigio.mediadownloader.di.modules
 import android.content.Context
 import com.josebigio.mediadownloader.api.ApiManager
 import com.josebigio.mediadownloader.navigation.Navigator
+import com.josebigio.mediadownloader.presenters.DetailsPresenter
 import com.josebigio.mediadownloader.presenters.SearchPresenter
 import dagger.Module
 import dagger.Provides
@@ -20,4 +21,9 @@ class PresenterModule(val context: Context) {
         return SearchPresenter(api,navigator)
     }
 
+    @Provides
+    @Singleton
+    fun provideDetailsPresenter(api:ApiManager, navigator: Navigator): DetailsPresenter {
+        return DetailsPresenter(api,navigator)
+    }
 }

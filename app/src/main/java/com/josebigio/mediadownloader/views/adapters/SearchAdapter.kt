@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.josebigio.mediadownloader.R
 import kotlinx.android.synthetic.main.search_cell.view.*
+import java.io.Serializable
 
 /**
  * Created by josebigio on 7/31/17.
@@ -37,7 +38,7 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-data class SearchItem(val title: String, val url: String)
+data class SearchItem(val title: String, val url: String, val id:String): Serializable
 
 interface SearchAdapterDelegate {
     fun onItemClick(searchItem: SearchItem)

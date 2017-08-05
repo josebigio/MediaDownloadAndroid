@@ -8,6 +8,7 @@ import com.josebigio.mediadownloader.di.modules.NavigationModule
 import com.josebigio.mediadownloader.di.modules.NetworkModule
 import com.josebigio.mediadownloader.di.modules.PresenterModule
 import com.josebigio.mediadownloader.navigation.Navigator
+import com.josebigio.mediadownloader.presenters.DetailsPresenter
 import com.josebigio.mediadownloader.presenters.SearchPresenter
 import com.josebigio.mediadownloader.views.activities.BaseActivity
 import com.josebigio.mediadownloader.views.activities.SearchActivity
@@ -29,6 +30,7 @@ interface MainComponent  {
 
     fun context(): Context
     fun searchPresenter() : SearchPresenter
+    fun detailsPresenter(): DetailsPresenter
     fun apiManager(): ApiManager
     fun navigator(): Navigator
 

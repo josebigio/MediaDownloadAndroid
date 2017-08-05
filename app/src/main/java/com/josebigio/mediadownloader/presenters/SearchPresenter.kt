@@ -9,7 +9,7 @@ import com.josebigio.mediadownloader.views.interfaces.SearchView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Singleton
 
 /**
@@ -21,15 +21,16 @@ class SearchPresenter(val api: ApiManager, val navigator: Navigator) {
     var view:SearchView? = null
 
     fun onViewActive() {
-
+        Timber.d("onViewActive")
     }
 
     fun onViewInactive() {
-
+        Timber.d("onViewInactive")
     }
 
     fun onSearchItemClicked(searchItem: SearchItem) {
         Timber.d("onSearchItemClicked: $searchItem")
+        view?.navigateToDetails(searchItem.id)
     }
 
     fun onSearch(query:String) {
@@ -45,7 +46,7 @@ class SearchPresenter(val api: ApiManager, val navigator: Navigator) {
                     val dataSet = ArrayList<SearchItem>()
                     for (result: SearchResult in searchResponse.results) {
                         Timber.d("Search result: ${result.title}")
-                        val searchItem = SearchItem(result.title, result.thumbnails.default.url)
+                        val searchItem = SearchItem(result.title, result.thumbnails.default.url, result.videoId)
                         dataSet.add(searchItem)
                     }
                     view?.showLoading(true)

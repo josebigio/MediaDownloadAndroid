@@ -1,7 +1,6 @@
 package com.josebigio.mediadownloader.views.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,7 +8,7 @@ import com.josebigio.mediadownloader.MediaApplication
 import com.josebigio.mediadownloader.R
 import com.josebigio.mediadownloader.di.components.ActivityComponent
 import com.josebigio.mediadownloader.di.components.DaggerActivityComponent
-import com.josebigio.mediadownloader.di.modules.NavigationModule
+import com.josebigio.mediadownloader.navigation.Navigator
 import com.josebigio.mediadownloader.presenters.SearchPresenter
 import com.josebigio.mediadownloader.views.adapters.SearchAdapter
 import com.josebigio.mediadownloader.views.adapters.SearchAdapterDelegate
@@ -27,6 +26,9 @@ class SearchActivity : BaseActivity(), SearchView, SearchAdapterDelegate {
     @Singleton
     @Inject
     lateinit var presenter: SearchPresenter
+    @Singleton
+    @Inject
+    lateinit var navigator: Navigator
 
     lateinit var activityComponent: ActivityComponent
 
@@ -69,6 +71,11 @@ class SearchActivity : BaseActivity(), SearchView, SearchAdapterDelegate {
     override fun onItemClick(searchItem: SearchItem) {
         presenter.onSearchItemClicked(searchItem)
     }
+
+    override fun navigateToDetails(id:String) {
+        navigator.navigateToDetails(id,this)
+    }
+
 
     private fun initViews() {
         recyclerView.layoutManager = LinearLayoutManager(this)

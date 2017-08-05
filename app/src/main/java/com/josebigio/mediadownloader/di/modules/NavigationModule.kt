@@ -15,7 +15,7 @@ class NavigationModule(val context: Context) {
     @Provides
     @Singleton
     fun provideNavigator(context: Context): Navigator {
-        return Navigator(context)
+        return Navigator()
     }
 
 }

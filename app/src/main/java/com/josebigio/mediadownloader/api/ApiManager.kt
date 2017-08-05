@@ -1,5 +1,6 @@
 package com.josebigio.mediadownloader.api
 
+import com.josebigio.mediadownloader.api.models.InfoResponse
 import com.josebigio.mediadownloader.models.SearchResponse
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -13,5 +14,9 @@ class ApiManager @Inject constructor(val audioApi: AudioApi) {
 
     fun searchVideo(query: String ): Observable<SearchResponse> {
         return audioApi.searchAudio(query)
+    }
+
+    fun getInfo(id: String): Observable<InfoResponse> {
+        return audioApi.getInfo(id)
     }
 }

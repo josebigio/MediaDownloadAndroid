@@ -1,30 +1,17 @@
 package com.josebigio.mediadownloader.navigation
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import javax.inject.Singleton
+import com.josebigio.mediadownloader.views.activities.DetailsActivity
 
 /**
  * Created by josebigio on 8/2/17.
  */
-class Navigator(val context: Context) {
+class Navigator {
 
-
-
-    fun navigateTo(page: Page) {
-//        when (page) {
-//            Page.SEARCH ->
-//        }
+    fun navigateToDetails(id: String, context: Context) {
+        context.startActivity(DetailsActivity.getCallingIntent(context,id))
     }
 
-    private fun goToView() {
-        val intent = Intent()
-   }
 }
 
-enum class Page {
-    SEARCH,
-    DETAILS,
-    LIBRARY,
-}
+

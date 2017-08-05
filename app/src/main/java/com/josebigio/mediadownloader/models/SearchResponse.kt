@@ -17,7 +17,7 @@ class SearchResult(
 class Thumbnail(
         val default: ThumbnailItem,
         val medium: ThumbnailItem,
-        val hight: ThumbnailItem
+        val high: ThumbnailItem
 )
 
 class ThumbnailItem(
