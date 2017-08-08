@@ -10,11 +10,11 @@ import javax.inject.Singleton
  * Created by josebigio on 8/2/17.
  */
 @Module
-class NavigationModule(val context: Context) {
+class NavigationModule {
 
     @Provides
     @Singleton
-    fun provideNavigator(context: Context): Navigator {
+    fun provideNavigator(): Navigator {
         return Navigator()
     }
 

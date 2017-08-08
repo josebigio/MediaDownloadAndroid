@@ -17,12 +17,12 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="8dp"
-        app:layout_constraintStart_toEndOf="@+id/searchThumbnailImage"
+        app:layout_constraintStart_toEndOf="@+id/searchDraweeView"
         android:layout_marginStart="8dp"
         app:layout_constraintHorizontal_bias="0.0" />
 
     <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/searchThumbnailImage"
+        android:id="@+id/searchDraweeView"
         android:layout_width="40dp"
         android:layout_height="40dp"
         fresco:placeholderImage="@drawable/my_drawable"

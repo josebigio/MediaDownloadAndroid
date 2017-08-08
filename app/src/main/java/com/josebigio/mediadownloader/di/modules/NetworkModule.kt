@@ -1,7 +1,6 @@
 package com.josebigio.mediadownloader.di.modules
 
 
-import com.josebigio.mediadownloader.MediaApplication
 import com.josebigio.mediadownloader.api.ApiManager
 import com.josebigio.mediadownloader.api.AudioApi
 import dagger.Module
@@ -15,7 +14,7 @@ import javax.inject.Singleton
  * Created by josebigio on 7/30/17.
  */
 @Module
-class NetworkModule(val app:MediaApplication) {
+class NetworkModule {
 
     @Provides
     @Singleton

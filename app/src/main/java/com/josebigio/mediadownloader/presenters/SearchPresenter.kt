@@ -16,7 +16,7 @@ import javax.inject.Singleton
  * Created by josebigio on 8/1/17.
  */
 @Singleton
-class SearchPresenter(val api: ApiManager, val navigator: Navigator) {
+class SearchPresenter(val api: ApiManager) {
 
     var view:SearchView? = null
 

@@ -33,7 +33,7 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(searchItem: SearchItem, onClickListener: View.OnClickListener) {
         itemView.searchTextView.text = searchItem.title
-        itemView.searchThumbnailImage.setImageURI(searchItem.url)
+        itemView.searchDraweeView.setImageURI(searchItem.url)
         itemView.setOnClickListener(onClickListener)
     }
 }

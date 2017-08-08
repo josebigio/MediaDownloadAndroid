@@ -1,17 +1,14 @@
 package com.josebigio.mediadownloader.di.components
 
-import android.app.Application
 import android.content.Context
 import com.josebigio.mediadownloader.api.ApiManager
 import com.josebigio.mediadownloader.di.modules.ApplicationModule
+import com.josebigio.mediadownloader.di.modules.ManagerModule
 import com.josebigio.mediadownloader.di.modules.NavigationModule
 import com.josebigio.mediadownloader.di.modules.NetworkModule
-import com.josebigio.mediadownloader.di.modules.PresenterModule
+import com.josebigio.mediadownloader.managers.DownloadManager
 import com.josebigio.mediadownloader.navigation.Navigator
-import com.josebigio.mediadownloader.presenters.DetailsPresenter
-import com.josebigio.mediadownloader.presenters.SearchPresenter
 import com.josebigio.mediadownloader.views.activities.BaseActivity
-import com.josebigio.mediadownloader.views.activities.SearchActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -21,17 +18,16 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = arrayOf(
         ApplicationModule::class,
-        PresenterModule::class,
         NavigationModule::class,
+        ManagerModule::class,
         NetworkModule::class)
 )
-interface MainComponent  {
+interface ApplicationComponent {
     fun inject(activity: BaseActivity)
 
     fun context(): Context
-    fun searchPresenter() : SearchPresenter
-    fun detailsPresenter(): DetailsPresenter
     fun apiManager(): ApiManager
+    fun downloadManager(): DownloadManager
     fun navigator(): Navigator
 
 }

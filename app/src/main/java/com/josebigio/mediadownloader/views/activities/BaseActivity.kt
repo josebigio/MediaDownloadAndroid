@@ -3,6 +3,8 @@ package com.josebigio.mediadownloader.views.activities
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.josebigio.mediadownloader.MediaApplication
+import com.josebigio.mediadownloader.di.components.ActivityComponent
+import com.josebigio.mediadownloader.di.components.DaggerActivityComponent
 import com.josebigio.mediadownloader.di.modules.ActivityModule
 
 /**
@@ -10,13 +12,16 @@ import com.josebigio.mediadownloader.di.modules.ActivityModule
  */
 abstract class BaseActivity: AppCompatActivity() {
 
+    protected lateinit var activityComponent: ActivityComponent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MediaApplication.mainComponent.inject(this)
+        activityComponent = DaggerActivityComponent.builder()
+                .applicationComponent(MediaApplication.applicationComponent)
+                .activityModule(ActivityModule(this))
+                .build()
     }
 
-    protected fun getActivityModule(): ActivityModule {
-        return ActivityModule(this)
-    }
+
 
 }

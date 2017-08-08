@@ -1,29 +1,35 @@
 package com.josebigio.mediadownloader.di.modules
 
+import android.app.Activity
 import android.content.Context
 import com.josebigio.mediadownloader.api.ApiManager
-import com.josebigio.mediadownloader.navigation.Navigator
+import com.josebigio.mediadownloader.di.PerActivity
+import com.josebigio.mediadownloader.managers.DownloadManager
+import com.josebigio.mediadownloader.mappers.CommentMapper
+import com.josebigio.mediadownloader.mappers.ItemInfoMapper
 import com.josebigio.mediadownloader.presenters.DetailsPresenter
 import com.josebigio.mediadownloader.presenters.SearchPresenter
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
+import timber.log.Timber
 
 /**
  * Created by josebigio on 8/1/17.
  */
 @Module
-class PresenterModule(val context: Context) {
+class PresenterModule {
 
+    @PerActivity
     @Provides
-    @Singleton
-    fun provideSearchPresenter(api:ApiManager, navigator: Navigator): SearchPresenter {
-        return SearchPresenter(api,navigator)
+    fun provideSearchPresenter(api: ApiManager): SearchPresenter {
+        Timber.d("[-DI-] creating SearchPresenter")
+        return SearchPresenter(api)
     }
 
+    @PerActivity
     @Provides
-    @Singleton
-    fun provideDetailsPresenter(api:ApiManager, navigator: Navigator): DetailsPresenter {
-        return DetailsPresenter(api,navigator)
+    fun provideDetailsPresenter(api: ApiManager, commentMapper: CommentMapper, itemInfoMapper: ItemInfoMapper, downloadManager: DownloadManager): DetailsPresenter {
+        Timber.d("[-DI-] creating DetailsPresenter")
+        return DetailsPresenter(api,commentMapper,itemInfoMapper,downloadManager)
     }
 }

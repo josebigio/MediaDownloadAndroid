@@ -3,19 +3,19 @@ package com.josebigio.mediadownloader.views.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.josebigio.mediadownloader.MediaApplication
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.josebigio.mediadownloader.R
 import com.josebigio.mediadownloader.constants.DETAIL_VIEW_ID_KEY
-import com.josebigio.mediadownloader.di.components.ActivityComponent
-import com.josebigio.mediadownloader.di.components.DaggerActivityComponent
 import com.josebigio.mediadownloader.models.ItemInfo
+import com.josebigio.mediadownloader.models.comments.CommentsModel
 import com.josebigio.mediadownloader.presenters.DetailsPresenter
-import com.josebigio.mediadownloader.views.adapters.SearchItem
+import com.josebigio.mediadownloader.views.adapters.CommentsAdapter
 import com.josebigio.mediadownloader.views.interfaces.DetailsView
 import kotlinx.android.synthetic.main.details_view.*
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 /**
@@ -32,21 +32,15 @@ class DetailsActivity: BaseActivity(), DetailsView {
     }
 
     @Inject
-    @Singleton
     lateinit var presenter: DetailsPresenter
 
-    lateinit var activityComponent: ActivityComponent
-
+    private var commentsAdapter = CommentsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.details_view)
-        val mediaApp = MediaApplication.mainComponent
-        activityComponent = DaggerActivityComponent.builder()
-                .mainComponent(mediaApp)
-                .activityModule(getActivityModule())
-                .build()
         activityComponent.inject(this)
+        initializeView()
         initializePresenter(savedInstanceState)
     }
 
@@ -61,15 +55,36 @@ class DetailsActivity: BaseActivity(), DetailsView {
         presenter.onViewInactive()
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putString(DETAIL_VIEW_ID_KEY,presenter.id)
+        super.onSaveInstanceState(outState)
+    }
 
-    override fun render(itemInfo: ItemInfo) {
+    override fun renderItemInfo(itemInfo: ItemInfo) {
         Timber.d("rendering item: $itemInfo")
         detailsTitleTV.text = itemInfo.title
         detailsDescriptionTV.text = itemInfo.description
+        detailsMetaDataTV.text = "Length: ${itemInfo.duration}. Published on: ${itemInfo.publication}"
         detailsDraweeView.setImageURI(itemInfo.imageUrl)
     }
 
+    override fun renderComments(commentsModel: CommentsModel) {
+        commentsAdapter.commentsModel = commentsModel
+        commentsAdapter.notifyDataSetChanged()
+    }
+
     override fun showLoading(show: Boolean) {
+        if(show) detailsProgress.visibility = View.VISIBLE
+        else detailsProgress.visibility = View.GONE
+    }
+
+    override fun enableDownload(enable: Boolean) {
+        if(enable) {
+            detailsDownloadButton.show()
+        }
+        else {
+            detailsDownloadButton.hide()
+        }
     }
 
 
@@ -82,5 +97,46 @@ class DetailsActivity: BaseActivity(), DetailsView {
         }
         if(id != null) presenter.initialize(id,this)
     }
+
+    private fun initializeView() {
+        val layoutManager = LinearLayoutManager(this)
+        detailsRecycler.layoutManager = layoutManager
+        detailsRecycler.adapter = commentsAdapter
+        val dividerItemDecoration = DividerItemDecoration(this,
+                layoutManager.orientation)
+        detailsRecycler.addItemDecoration(dividerItemDecoration)
+        detailsDownloadButton.setOnClickListener({
+            presenter.onDownloadClicked()
+        })
+    }
+
+//    private fun startDownload() {
+//        val intent = Intent(this, DownloadService::class.java)
+//        intent.putExtra("videoId", editText.text.toString())
+//        intent.putExtra("receiver", DownloadReceiver(Handler()))
+//        startService(intent)
+//    }
+
+
+//    private inner class DownloadReceiver(handler: Handler) : ResultReceiver(handler) {
+//
+//        override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+//            super.onReceiveResult(resultCode, resultData)
+//            if (resultCode == DownloadService.UPDATE_PROGRESS) {
+//                resultData?:return
+//                val progress = resultData.getInt("progress")
+//                dialog.progress = progress
+//                if (progress == 100) {
+//                    dialog.visibility = View.GONE
+//                    Toast.makeText(this@SearchActivity, "DOWNLOAD DONE", Toast.LENGTH_LONG).show()
+//                }
+//            }
+//            else if(resultCode == DownloadService.DOWNLOAD_STARTED) {
+//                //dialog.isIndeterminate = false
+//                dialog.progress = 0
+//                Toast.makeText(this@SearchActivity, "DOWNLOAD STARTED", Toast.LENGTH_LONG).show()
+//            }
+//        }
+//    }
 
 }

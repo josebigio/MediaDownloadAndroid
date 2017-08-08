@@ -61,11 +61,20 @@ dependencies {
     //Images
     compile 'com.facebook.fresco:fresco:1.4.0'
 
+    //Utils
+    compile 'joda-time:joda-time:2.9.4'
+
+    //UI helpers
+    compile 'com.github.carlonzo.stikkyheader:core:0.0.3-SNAPSHOT'
+
+
+
 
 
 
 
     implementation 'com.android.support:recyclerview-v7:26.0.0-beta1'
+    implementation 'com.android.support:design:26.0.0-beta1'
 }
 
 buildscript {

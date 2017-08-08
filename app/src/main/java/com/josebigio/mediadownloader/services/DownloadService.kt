@@ -21,7 +21,6 @@ import java.net.URL
  */
 class DownloadService : IntentService("DownloadService") {
 
-    val TAG = "DownloadService"
     val AUDIO_FILE_EXTENSION = "mp3"
     val BASE_URL = "http://ec2-52-11-161-241.us-west-2.compute.amazonaws.com/audio?videoId="
 
@@ -29,6 +28,7 @@ class DownloadService : IntentService("DownloadService") {
 
         val UPDATE_PROGRESS = 8344
         val DOWNLOAD_STARTED = 1337
+        val DOWNLOAD_DONE = 9000
     }
 
     override fun onHandleIntent(intent: Intent?) {
@@ -65,7 +65,7 @@ class DownloadService : IntentService("DownloadService") {
             outputStream.flush()
             outputStream.close()
             input.close()
-            Timber.d("DOWNLOAD FOR $videoId DONE");
+            Timber.d("DOWNLOAD FOR $videoId DONE")
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -73,5 +73,6 @@ class DownloadService : IntentService("DownloadService") {
         val resultData = Bundle()
         resultData.putInt("progress", 100)
         receiver.send(UPDATE_PROGRESS, resultData)
+        receiver.send(DOWNLOAD_DONE, resultData)
     }
 }

@@ -1,6 +1,7 @@
 package com.josebigio.mediadownloader.api
 
 import com.josebigio.mediadownloader.api.models.InfoResponse
+import com.josebigio.mediadownloader.api.models.comments.CommentsResponse
 import com.josebigio.mediadownloader.models.SearchResponse
 import io.reactivex.Observable
 import retrofit2.http.GET
@@ -15,4 +16,7 @@ interface AudioApi {
 
     @GET("/info")
     fun getInfo(@Query("id") id: String): Observable<InfoResponse>
+
+    @GET("/comments")
+    fun getComments(@Query("id") id: String): Observable<CommentsResponse>
 }

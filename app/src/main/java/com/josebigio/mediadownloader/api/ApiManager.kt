@@ -1,6 +1,7 @@
 package com.josebigio.mediadownloader.api
 
 import com.josebigio.mediadownloader.api.models.InfoResponse
+import com.josebigio.mediadownloader.api.models.comments.CommentsResponse
 import com.josebigio.mediadownloader.models.SearchResponse
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -18,5 +19,9 @@ class ApiManager @Inject constructor(val audioApi: AudioApi) {
 
     fun getInfo(id: String): Observable<InfoResponse> {
         return audioApi.getInfo(id)
+    }
+
+    fun getComments(id: String): Observable<CommentsResponse> {
+        return audioApi.getComments(id)
     }
 }

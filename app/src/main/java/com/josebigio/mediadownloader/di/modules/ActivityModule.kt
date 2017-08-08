@@ -1,7 +1,10 @@
 package com.josebigio.mediadownloader.di.modules
 
 import android.app.Activity
+import com.josebigio.mediadownloader.api.ApiManager
 import com.josebigio.mediadownloader.di.PerActivity
+import com.josebigio.mediadownloader.presenters.DetailsPresenter
+import com.josebigio.mediadownloader.presenters.SearchPresenter
 import dagger.Module
 import dagger.Provides
 
@@ -16,4 +19,6 @@ class ActivityModule(val activity: Activity) {
     fun provideActivity(): Activity {
         return activity
     }
+
+
 }
