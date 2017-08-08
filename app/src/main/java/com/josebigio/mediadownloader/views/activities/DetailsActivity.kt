@@ -34,7 +34,7 @@ class DetailsActivity: BaseActivity(), DetailsView {
     @Inject
     lateinit var presenter: DetailsPresenter
 
-    private var commentsAdapter = CommentsAdapter()
+    private var detailsAdapter = CommentsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,15 +62,14 @@ class DetailsActivity: BaseActivity(), DetailsView {
 
     override fun renderItemInfo(itemInfo: ItemInfo) {
         Timber.d("rendering item: $itemInfo")
-        detailsTitleTV.text = itemInfo.title
-        detailsDescriptionTV.text = itemInfo.description
-        detailsMetaDataTV.text = "Length: ${itemInfo.duration}. Published on: ${itemInfo.publication}"
         detailsDraweeView.setImageURI(itemInfo.imageUrl)
+        detailsAdapter.itemInfo = itemInfo
+        detailsAdapter.notifyDataSetChanged()
     }
 
     override fun renderComments(commentsModel: CommentsModel) {
-        commentsAdapter.commentsModel = commentsModel
-        commentsAdapter.notifyDataSetChanged()
+        detailsAdapter.commentsModel = commentsModel
+        detailsAdapter.notifyDataSetChanged()
     }
 
     override fun showLoading(show: Boolean) {
@@ -101,7 +100,7 @@ class DetailsActivity: BaseActivity(), DetailsView {
     private fun initializeView() {
         val layoutManager = LinearLayoutManager(this)
         detailsRecycler.layoutManager = layoutManager
-        detailsRecycler.adapter = commentsAdapter
+        detailsRecycler.adapter = detailsAdapter
         val dividerItemDecoration = DividerItemDecoration(this,
                 layoutManager.orientation)
         detailsRecycler.addItemDecoration(dividerItemDecoration)
