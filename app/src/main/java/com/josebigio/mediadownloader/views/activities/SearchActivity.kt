@@ -4,14 +4,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
-import com.josebigio.mediadownloader.MediaApplication
 import com.josebigio.mediadownloader.R
-import com.josebigio.mediadownloader.constants.DETAIL_VIEW_ID_KEY
-import com.josebigio.mediadownloader.constants.SEARCH_VIEW_QUERY_KEY
-import com.josebigio.mediadownloader.di.components.ActivityComponent
-import com.josebigio.mediadownloader.di.components.DaggerActivityComponent
-import com.josebigio.mediadownloader.di.modules.ActivityModule
-import com.josebigio.mediadownloader.di.modules.PresenterModule
 import com.josebigio.mediadownloader.navigation.Navigator
 import com.josebigio.mediadownloader.presenters.SearchPresenter
 import com.josebigio.mediadownloader.views.adapters.SearchAdapter

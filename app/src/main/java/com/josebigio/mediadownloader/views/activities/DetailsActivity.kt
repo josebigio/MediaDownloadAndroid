@@ -107,35 +107,8 @@ class DetailsActivity: BaseActivity(), DetailsView {
         detailsDownloadButton.setOnClickListener({
             presenter.onDownloadClicked()
         })
+
     }
 
-//    private fun startDownload() {
-//        val intent = Intent(this, DownloadService::class.java)
-//        intent.putExtra("videoId", editText.text.toString())
-//        intent.putExtra("receiver", DownloadReceiver(Handler()))
-//        startService(intent)
-//    }
-
-
-//    private inner class DownloadReceiver(handler: Handler) : ResultReceiver(handler) {
-//
-//        override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
-//            super.onReceiveResult(resultCode, resultData)
-//            if (resultCode == DownloadService.UPDATE_PROGRESS) {
-//                resultData?:return
-//                val progress = resultData.getInt("progress")
-//                dialog.progress = progress
-//                if (progress == 100) {
-//                    dialog.visibility = View.GONE
-//                    Toast.makeText(this@SearchActivity, "DOWNLOAD DONE", Toast.LENGTH_LONG).show()
-//                }
-//            }
-//            else if(resultCode == DownloadService.DOWNLOAD_STARTED) {
-//                //dialog.isIndeterminate = false
-//                dialog.progress = 0
-//                Toast.makeText(this@SearchActivity, "DOWNLOAD STARTED", Toast.LENGTH_LONG).show()
-//            }
-//        }
-//    }
 
 }
