@@ -7,6 +7,7 @@ import com.josebigio.mediadownloader.di.components.DaggerApplicationComponent
 import com.josebigio.mediadownloader.di.modules.ApplicationModule
 import com.josebigio.mediadownloader.di.modules.NavigationModule
 import com.josebigio.mediadownloader.di.modules.NetworkModule
+import io.realm.Realm
 import timber.log.Timber
 
 /**
@@ -23,6 +24,7 @@ class MediaApplication: Application() {
          super.onCreate()
         Timber.plant(Timber.DebugTree())
         Fresco.initialize(this)
+        Realm.init(this)
         applicationComponent = DaggerApplicationComponent
                 .builder()
                 .applicationModule(ApplicationModule(this))

@@ -10,6 +10,7 @@ interface DetailsView {
 
     fun renderItemInfo(itemInfo: ItemInfo)
     fun showLoading(show:Boolean)
+    fun showProgress(progress:Int)
     fun enableDownload(enable:Boolean)
     fun renderComments(commentsModel: CommentsModel)
 }

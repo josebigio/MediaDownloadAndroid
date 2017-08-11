@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'realm-android'
 
 
 android {
@@ -60,12 +61,13 @@ dependencies {
 
     //Images
     compile 'com.facebook.fresco:fresco:1.4.0'
+    compile 'jp.wasabeef:fresco-processors:2.1.0'
+
 
     //Utils
     compile 'joda-time:joda-time:2.9.4'
 
     //UI helpers
-    compile 'com.github.carlonzo.stikkyheader:core:0.0.3-SNAPSHOT'
 
 
 

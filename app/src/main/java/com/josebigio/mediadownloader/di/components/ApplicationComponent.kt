@@ -7,6 +7,7 @@ import com.josebigio.mediadownloader.di.modules.ManagerModule
 import com.josebigio.mediadownloader.di.modules.NavigationModule
 import com.josebigio.mediadownloader.di.modules.NetworkModule
 import com.josebigio.mediadownloader.managers.DownloadManager
+import com.josebigio.mediadownloader.managers.FileManager
 import com.josebigio.mediadownloader.navigation.Navigator
 import com.josebigio.mediadownloader.views.activities.BaseActivity
 import dagger.Component
@@ -28,6 +29,7 @@ interface ApplicationComponent {
     fun context(): Context
     fun apiManager(): ApiManager
     fun downloadManager(): DownloadManager
+    fun fileManager():FileManager
     fun navigator(): Navigator
 
 }

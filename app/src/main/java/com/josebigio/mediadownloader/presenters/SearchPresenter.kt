@@ -18,7 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class SearchPresenter(val api: ApiManager) {
 
-    var view:SearchView? = null
+    var view: SearchView? = null
 
     fun onViewActive() {
         Timber.d("onViewActive")
@@ -33,8 +33,8 @@ class SearchPresenter(val api: ApiManager) {
         view?.navigateToDetails(searchItem.id)
     }
 
-    fun onSearch(query:String) {
-        if(TextUtils.isEmpty(query)) {
+    fun onSearch(query: String) {
+        if (TextUtils.isEmpty(query)) {
             return
         }
         view?.showLoading(true)
@@ -45,12 +45,15 @@ class SearchPresenter(val api: ApiManager) {
                     searchResponse ->
                     val dataSet = ArrayList<SearchItem>()
                     for (result: SearchResult in searchResponse.results) {
-                        Timber.d("Search result: ${result.title}")
+                        Timber.d("Search result: $result")
                         val searchItem = SearchItem(result.title, result.thumbnails.default.url, result.videoId)
                         dataSet.add(searchItem)
                     }
                     view?.showLoading(true)
                     view?.render(dataSet)
+                }, {
+                    error ->
+                    Timber.e("error getting search result: $error")
                 })
 
     }

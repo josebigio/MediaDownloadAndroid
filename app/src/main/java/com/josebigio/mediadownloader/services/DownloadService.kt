@@ -29,10 +29,15 @@ class DownloadService : IntentService("DownloadService") {
         val UPDATE_PROGRESS = 8344
         val DOWNLOAD_STARTED = 1337
         val DOWNLOAD_DONE = 9000
+
+        val VIDEO_ID_PARAM = "videoId"
+
+        val UPDATE_PROGRESS_KEY = "progress"
+        val DOWNLOAD_DONE_KEY = "filePath"
     }
 
     override fun onHandleIntent(intent: Intent?) {
-        val videoId = intent!!.getStringExtra("videoId")
+        val videoId = intent!!.getStringExtra(VIDEO_ID_PARAM)
         Timber.d("Downloading videoId $videoId")
         val urlToDownload = BASE_URL + videoId
         val receiver = intent.getParcelableExtra<Parcelable>("receiver") as ResultReceiver
@@ -56,7 +61,7 @@ class DownloadService : IntentService("DownloadService") {
                 val resultData = Bundle()
                 val progress = ((total * 100.00) / fileLength).toInt()
                 //Log.d(TAG,"download progress: $progress")
-                resultData.putInt("progress", progress)
+                resultData.putInt(UPDATE_PROGRESS_KEY, progress)
                 receiver.send(UPDATE_PROGRESS, resultData)
                 outputStream.write(data, 0, count)
                 count = input.read(data)
@@ -71,8 +76,11 @@ class DownloadService : IntentService("DownloadService") {
         }
 
         val resultData = Bundle()
-        resultData.putInt("progress", 100)
-        receiver.send(UPDATE_PROGRESS, resultData)
+        resultData.putString(DOWNLOAD_DONE_KEY, getFilePath(videoId))
         receiver.send(DOWNLOAD_DONE, resultData)
+    }
+
+    private fun getFilePath(videoId:String): String {
+        return "${getExternalFilesDir(null)}/$videoId.$AUDIO_FILE_EXTENSION"
     }
 }

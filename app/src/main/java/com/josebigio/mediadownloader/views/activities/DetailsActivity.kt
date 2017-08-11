@@ -1,11 +1,16 @@
 package com.josebigio.mediadownloader.views.activities
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.ProgressBar
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.josebigio.mediadownloader.R
 import com.josebigio.mediadownloader.constants.DETAIL_VIEW_ID_KEY
 import com.josebigio.mediadownloader.models.ItemInfo
@@ -13,9 +18,13 @@ import com.josebigio.mediadownloader.models.comments.CommentsModel
 import com.josebigio.mediadownloader.presenters.DetailsPresenter
 import com.josebigio.mediadownloader.views.adapters.CommentsAdapter
 import com.josebigio.mediadownloader.views.interfaces.DetailsView
+import jp.wasabeef.fresco.processors.BlurPostprocessor
 import kotlinx.android.synthetic.main.details_view.*
 import timber.log.Timber
 import javax.inject.Inject
+
+
+
 
 
 /**
@@ -29,6 +38,8 @@ class DetailsActivity: BaseActivity(), DetailsView {
             callingIntent.putExtra(DETAIL_VIEW_ID_KEY, id)
             return callingIntent
         }
+
+        val BLUR_RADIUS = 10
     }
 
     @Inject
@@ -62,9 +73,9 @@ class DetailsActivity: BaseActivity(), DetailsView {
 
     override fun renderItemInfo(itemInfo: ItemInfo) {
         Timber.d("rendering item: $itemInfo")
-        detailsDraweeView.setImageURI(itemInfo.imageUrl)
         detailsAdapter.itemInfo = itemInfo
         detailsAdapter.notifyDataSetChanged()
+        renderImage(itemInfo.imageUrl)
     }
 
     override fun renderComments(commentsModel: CommentsModel) {
@@ -73,8 +84,19 @@ class DetailsActivity: BaseActivity(), DetailsView {
     }
 
     override fun showLoading(show: Boolean) {
-        if(show) detailsProgress.visibility = View.VISIBLE
-        else detailsProgress.visibility = View.GONE
+//        detailsProgress.isIndeterminate = true
+//        if (show) detailsProgress.visibility = View.VISIBLE
+//        else detailsProgress.visibility = View.GONE
+
+    }
+
+    override fun showProgress(progress:Int) {
+        detailsProgress.isIndeterminate = false
+        detailsProgress.max = 100
+        detailsProgress.progress = progress
+        detailsProgress.visibility = View.VISIBLE
+
+        val progressBar = ProgressBar(this)
     }
 
     override fun enableDownload(enable: Boolean) {
@@ -84,6 +106,17 @@ class DetailsActivity: BaseActivity(), DetailsView {
         else {
             detailsDownloadButton.hide()
         }
+    }
+
+    fun renderImage(url: String) {
+        val imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
+                .setPostprocessor(BlurPostprocessor(this, BLUR_RADIUS))
+                .build()
+        detailsDraweeView.controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(imageRequest)
+                .setOldController(detailsDraweeView.controller)
+                .build()
+        detailsDraweeViewSmall.setImageURI(url)
     }
 
 
@@ -98,6 +131,7 @@ class DetailsActivity: BaseActivity(), DetailsView {
     }
 
     private fun initializeView() {
+
         val layoutManager = LinearLayoutManager(this)
         detailsRecycler.layoutManager = layoutManager
         detailsRecycler.adapter = detailsAdapter
@@ -107,8 +141,10 @@ class DetailsActivity: BaseActivity(), DetailsView {
         detailsDownloadButton.setOnClickListener({
             presenter.onDownloadClicked()
         })
-
+        detailsProgress.sty
     }
+
+
 
 
 }
