@@ -8,6 +8,7 @@
 
 
     <application
+
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -15,6 +16,15 @@
         android:supportsRtl="true"
         android:name=".MediaApplication"
         android:theme="@style/AppTheme">
+        <!--<provider-->
+            <!--android:name=".providers.GenericFileProvider"-->
+            <!--android:authorities="${applicationId}.providers"-->
+            <!--android:exported="false"-->
+            <!--android:grantUriPermissions="true">-->
+            <!--<meta-data-->
+                <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+                <!--android:resource="@xml/provider_paths"/>-->
+        <!--</provider>-->
         <activity android:name=".MainActivity">
 
         </activity>

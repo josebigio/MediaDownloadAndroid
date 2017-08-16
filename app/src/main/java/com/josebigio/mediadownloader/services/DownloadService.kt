@@ -29,6 +29,7 @@ class DownloadService : IntentService("DownloadService") {
         val UPDATE_PROGRESS = 8344
         val DOWNLOAD_STARTED = 1337
         val DOWNLOAD_DONE = 9000
+        val DOWNLOAD_ERROR = 2341
 
         val VIDEO_ID_PARAM = "videoId"
 
@@ -73,6 +74,8 @@ class DownloadService : IntentService("DownloadService") {
             Timber.d("DOWNLOAD FOR $videoId DONE")
         } catch (e: IOException) {
             e.printStackTrace()
+            receiver.send(DOWNLOAD_ERROR,null)
+            return
         }
 
         val resultData = Bundle()

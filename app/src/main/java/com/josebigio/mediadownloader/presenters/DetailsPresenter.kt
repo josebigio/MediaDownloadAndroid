@@ -1,22 +1,28 @@
 package com.josebigio.mediadownloader.presenters
 
-import android.widget.Toast
 import com.josebigio.mediadownloader.api.ApiManager
-import com.josebigio.mediadownloader.managers.DownloadManager
+import com.josebigio.mediadownloader.api.models.InfoResponse
+import com.josebigio.mediadownloader.api.models.comments.CommentsResponse
+import com.josebigio.mediadownloader.managers.FileManager
 import com.josebigio.mediadownloader.mappers.CommentMapper
 import com.josebigio.mediadownloader.mappers.ItemInfoMapper
+import com.josebigio.mediadownloader.models.MediaFile
 import com.josebigio.mediadownloader.views.interfaces.DetailsView
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
  * Created by josebigio on 8/3/17.
  */
-class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, val itemInfoMapper: ItemInfoMapper, val downloadManager: DownloadManager) {
+class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, val itemInfoMapper: ItemInfoMapper, val fileManager: FileManager) {
 
     var view: DetailsView? = null
     var id: String? = null
+    val compositeDisposable = CompositeDisposable()
+    var loadingSpinnerCount = 0
 
     fun onViewActive() {
         Timber.d("onViewActive")
@@ -24,6 +30,7 @@ class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, va
 
     fun onViewInactive() {
         Timber.d("onViewInactive")
+        //compositeDisposable.dispose()
     }
 
     fun initialize(id: String, view: DetailsView) {
@@ -36,50 +43,138 @@ class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, va
     fun onDownloadClicked() {
         Timber.d("onDownloadClicked")
         val _id = id ?: return
-        view?.showLoading(true)
-        downloadManager.startAudioDownload(_id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    (progress) ->
-                    Timber.d("download progress: $progress")
-                        view?.showProgress(progress)
-                }, {
-                    error ->
-                        Timber.d("Error downloading: $error")
-                        view?.showLoading(false)
+        increaseSpinnerCount()
+        fileManager.fetchAndSaveFile(_id)
+    }
 
-                },{
-                    view?.showLoading(false)
-                })
-        view?.enableDownload(false)
+    fun onPlayClicked() {
+        Timber.d("onPlayClicked")
+        val _id = id ?: return
+        fileManager.getOrCreateFile(_id).firstOrError().subscribe({
+            mediaFile ->
+            if (mediaFile.filePath != null) {
+                view?.startPlayer(mediaFile.filePath!!)
+            }
+        })
+
     }
 
     private fun loadData(id: String) {
+        val commentsObserver = CommentObserver()
+        val itemInfoObserver = ItemInfoObserver()
+        val mediaFileObserver = MediaFileObserver()
+        val fileSaveProgressObservable = FileSaveProgressObservable()
+        compositeDisposable.addAll(commentsObserver, itemInfoObserver, mediaFileObserver)
         api.getInfo(id)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe({
-                    infoResponse ->
-                    view?.renderItemInfo(itemInfoMapper.transform(infoResponse))
-                })
-        view?.showLoading(true)
+                .doOnSubscribe { increaseSpinnerCount() }
+                .subscribe(itemInfoObserver)
         api.getComments(id)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe({
-                    commentsResponse ->
-                    val commentsModel = commentMapper.transform(commentsResponse) ?: return@subscribe
-                    Timber.d("comments model: $commentsModel")
-                    view?.renderComments(commentsModel)
-                    view?.showLoading(false)
-                },
-                        {
-                            onError ->
-                            Timber.e("ERROR GETTING COMMENTS $onError")
-                            view?.showLoading(false)
-                        })
+                .doOnSubscribe { increaseSpinnerCount() }
+                .subscribe(commentsObserver)
+        fileManager.getOrCreateFile(id).subscribe(mediaFileObserver)
+        fileManager.getDownloadProgressForFile(id).subscribe(fileSaveProgressObservable)
+
     }
 
+    private fun decreaseSpinnerCount() {
+        loadingSpinnerCount = Math.max(0, loadingSpinnerCount - 1)
+        view?.showLoading(loadingSpinnerCount > 0)
+    }
+
+    private fun increaseSpinnerCount() {
+        loadingSpinnerCount++
+        view?.showLoading(loadingSpinnerCount > 0)
+    }
+
+
+    //OBSERVERS
+    private inner class CommentObserver : DisposableObserver<CommentsResponse>() {
+
+        override fun onError(onError: Throwable?) {
+            Timber.e("ERROR GETTING COMMENTS $onError")
+            view?.alert("ERROR GETTING COMMENTS $onError")
+            decreaseSpinnerCount()
+        }
+
+        override fun onComplete() {}
+
+        override fun onNext(commentsResponse: CommentsResponse) {
+            val commentsModel = commentMapper.transform(commentsResponse) ?: return
+            Timber.d("comments model: $commentsModel")
+            view?.renderComments(commentsModel)
+            decreaseSpinnerCount()
+        }
+
+    }
+
+    private inner class ItemInfoObserver : DisposableObserver<InfoResponse>() {
+
+        override fun onError(onError: Throwable?) {
+            Timber.e("ERROR GETTING iteminfo $onError")
+            view?.alert("ERROR GETTING iteminfo $onError")
+            decreaseSpinnerCount()
+        }
+
+        override fun onComplete() {}
+
+        override fun onNext(infoResponse: InfoResponse) {
+            view?.renderItemInfo(itemInfoMapper.transform(infoResponse))
+            decreaseSpinnerCount()
+        }
+
+    }
+
+    private inner class MediaFileObserver : DisposableObserver<MediaFile>() {
+
+        override fun onError(onError: Throwable?) {
+            Timber.e("ERROR GETTING mediaFile $onError")
+            view?.alert("ERROR GETTING mediaFile $onError")
+        }
+
+        override fun onComplete() {}
+
+        override fun onNext(mediaFile: MediaFile) {
+            if (mediaFile.filePath == null) {
+                view?.enableDownload(true)
+                view?.enablePlay(false)
+            } else {
+                view?.enableDownload(false)
+                view?.enablePlay(true)
+            }
+        }
+
+    }
+
+    private inner class FileSaveProgressObservable : DisposableObserver<FileManager.DownloadProgress>() {
+
+        var recievedResponse = false
+
+        override fun onError(onError: Throwable?) {
+            Timber.e("ERROR GETTING mediaFile $onError")
+            view?.hideProgress()
+        }
+
+        override fun onComplete() {}
+
+        override fun onNext(downloadProgress: FileManager.DownloadProgress) {
+            if(downloadProgress.downloadInProgress) {
+                if(!downloadProgress.waitingForResponse && !recievedResponse) {
+                    decreaseSpinnerCount()
+                    recievedResponse = true
+                }
+                else  {
+                    view?.showProgress(downloadProgress.progress)
+                }
+            }
+           else {
+                view?.hideProgress()
+            }
+        }
+
+    }
 
 }

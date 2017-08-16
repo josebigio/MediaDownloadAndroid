@@ -39,16 +39,9 @@ class SearchActivity : BaseActivity(), SearchView, SearchAdapterDelegate {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_view)
-        var time = System.currentTimeMillis();
         activityComponent.inject(this)
         presenter.view = this
         initViews()
-        Timber.d("time for everything before: ${System.currentTimeMillis()-time}")
-        time = System.currentTimeMillis()
-        val file = fileManager.getFileByName("abcId")
-        Timber.d("time for reading: ${System.currentTimeMillis()-time}")
-        Timber.d("Retrieved ${file.fileName}")
-
     }
 
     override fun onResume() {

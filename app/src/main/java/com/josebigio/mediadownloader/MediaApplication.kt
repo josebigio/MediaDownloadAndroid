@@ -9,6 +9,9 @@ import com.josebigio.mediadownloader.di.modules.NavigationModule
 import com.josebigio.mediadownloader.di.modules.NetworkModule
 import io.realm.Realm
 import timber.log.Timber
+import android.os.StrictMode
+
+
 
 /**
  * Created by josebigio on 7/28/17.
@@ -25,6 +28,8 @@ class MediaApplication: Application() {
         Timber.plant(Timber.DebugTree())
         Fresco.initialize(this)
         Realm.init(this)
+        val builder = StrictMode.VmPolicy.Builder()
+        StrictMode.setVmPolicy(builder.build())
         applicationComponent = DaggerApplicationComponent
                 .builder()
                 .applicationModule(ApplicationModule(this))

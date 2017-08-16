@@ -30,17 +30,16 @@ class CommentsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
-        if (holder is VideoInfoViewHolder) {
+        if (holder is VideoInfoViewHolder && itemInfo != null) {
             holder.bind(itemInfo!!)
         }
         else if(holder is TopCommentViewHolder) {
-            holder.bind(commentsModel!!.comments[position])
+            holder.bind(commentsModel!!.comments[position-1])
         }
     }
 
     override fun getItemCount(): Int {
-        val headerCount = if ( itemInfo == null ) 0 else 1
-        return (commentsModel?.comments?.size ?: 0) + headerCount
+        return (commentsModel?.comments?.size ?: 0) + 1
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {

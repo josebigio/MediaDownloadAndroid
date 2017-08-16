@@ -1,6 +1,5 @@
 package com.josebigio.mediadownloader.views.activities
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -8,7 +7,7 @@ import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.ProgressBar
+import android.widget.Toast
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.josebigio.mediadownloader.R
@@ -21,10 +20,8 @@ import com.josebigio.mediadownloader.views.interfaces.DetailsView
 import jp.wasabeef.fresco.processors.BlurPostprocessor
 import kotlinx.android.synthetic.main.details_view.*
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
-
-
-
 
 
 /**
@@ -84,28 +81,52 @@ class DetailsActivity: BaseActivity(), DetailsView {
     }
 
     override fun showLoading(show: Boolean) {
-//        detailsProgress.isIndeterminate = true
-//        if (show) detailsProgress.visibility = View.VISIBLE
-//        else detailsProgress.visibility = View.GONE
-
+        Timber.d("showLoading: $show")
+        if (show) detailsSpinner.visibility = View.VISIBLE
+        else detailsSpinner.visibility = View.GONE
     }
 
     override fun showProgress(progress:Int) {
-        detailsProgress.isIndeterminate = false
-        detailsProgress.max = 100
-        detailsProgress.progress = progress
         detailsProgress.visibility = View.VISIBLE
+        detailsProgress.progress = progress
+    }
 
-        val progressBar = ProgressBar(this)
+    override  fun alert(alert:String) {
+        Toast.makeText(this,alert,Toast.LENGTH_LONG).show()
+    }
+
+    override fun hideProgress() {
+        detailsProgress.visibility = View.GONE
     }
 
     override fun enableDownload(enable: Boolean) {
         if(enable) {
+            detailsDownloadButton.visibility = View.VISIBLE
             detailsDownloadButton.show()
         }
         else {
             detailsDownloadButton.hide()
+            detailsDownloadButton.visibility = View.GONE
         }
+    }
+
+    override fun enablePlay(enable: Boolean) {
+        if(enable) {
+            detailsPlayButton.visibility = View.VISIBLE
+            detailsPlayButton.show()
+        }
+        else {
+            detailsPlayButton.hide()
+            detailsPlayButton.visibility = View.GONE
+        }
+    }
+
+    override fun startPlayer(filePath: String) {
+        val intent = Intent()
+        intent.action = android.content.Intent.ACTION_VIEW
+        val file = File(filePath)
+        intent.setDataAndType(Uri.fromFile(file), "audio/*")
+        startActivity(intent)
     }
 
     fun renderImage(url: String) {
@@ -141,7 +162,11 @@ class DetailsActivity: BaseActivity(), DetailsView {
         detailsDownloadButton.setOnClickListener({
             presenter.onDownloadClicked()
         })
-        detailsProgress.sty
+        detailsPlayButton.setOnClickListener{
+            presenter.onPlayClicked()
+        }
+        detailsProgress.max = 100
+        detailsProgress.isIndeterminate = false
     }
 
 

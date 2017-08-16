@@ -23,8 +23,9 @@ class ManagerModule {
 
     @Provides
     @Singleton
-    fun provideFileManager(context: Context): FileManager {
+    fun provideFileManager(context: Context, downloadManager: DownloadManager): FileManager {
         Timber.d("[-DI-] creating FileManager")
-        return FileManager(context)
+        return FileManager(context, downloadManager)
     }
+
 }
