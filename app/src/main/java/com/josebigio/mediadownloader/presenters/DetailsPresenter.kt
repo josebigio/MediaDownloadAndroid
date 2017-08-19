@@ -7,17 +7,22 @@ import com.josebigio.mediadownloader.managers.FileManager
 import com.josebigio.mediadownloader.mappers.CommentMapper
 import com.josebigio.mediadownloader.mappers.ItemInfoMapper
 import com.josebigio.mediadownloader.models.MediaFile
+import com.josebigio.mediadownloader.models.comments.Comment
+import com.josebigio.mediadownloader.models.comments.CommentsModel
+import com.josebigio.mediadownloader.providers.CommentsProvider
 import com.josebigio.mediadownloader.views.interfaces.DetailsView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import java.util.*
 
 /**
  * Created by josebigio on 8/3/17.
  */
-class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, val itemInfoMapper: ItemInfoMapper, val fileManager: FileManager) {
+class DetailsPresenter(val api: ApiManager, val itemInfoMapper: ItemInfoMapper,
+                       val fileManager: FileManager, val commentsProvider: CommentsProvider) {
 
     var view: DetailsView? = null
     var id: String? = null
@@ -59,6 +64,10 @@ class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, va
 
     }
 
+    fun onCommentSelected(id: UUID) {
+        commentsProvider.handleCommentAction(id)
+    }
+
     private fun loadData(id: String) {
         val commentsObserver = CommentObserver()
         val itemInfoObserver = ItemInfoObserver()
@@ -70,7 +79,7 @@ class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, va
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { increaseSpinnerCount() }
                 .subscribe(itemInfoObserver)
-        api.getComments(id)
+        commentsProvider.getComments(id)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { increaseSpinnerCount() }
@@ -92,7 +101,7 @@ class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, va
 
 
     //OBSERVERS
-    private inner class CommentObserver : DisposableObserver<CommentsResponse>() {
+    private inner class CommentObserver : DisposableObserver<CommentsModel>() {
 
         override fun onError(onError: Throwable?) {
             Timber.e("ERROR GETTING COMMENTS $onError")
@@ -102,8 +111,7 @@ class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, va
 
         override fun onComplete() {}
 
-        override fun onNext(commentsResponse: CommentsResponse) {
-            val commentsModel = commentMapper.transform(commentsResponse) ?: return
+        override fun onNext(commentsModel: CommentsModel) {
             Timber.d("comments model: $commentsModel")
             view?.renderComments(commentsModel)
             decreaseSpinnerCount()
@@ -161,16 +169,14 @@ class DetailsPresenter(val api: ApiManager, val commentMapper: CommentMapper, va
         override fun onComplete() {}
 
         override fun onNext(downloadProgress: FileManager.DownloadProgress) {
-            if(downloadProgress.downloadInProgress) {
-                if(!downloadProgress.waitingForResponse && !recievedResponse) {
+            if (downloadProgress.downloadInProgress) {
+                if (!downloadProgress.waitingForResponse && !recievedResponse) {
                     decreaseSpinnerCount()
                     recievedResponse = true
-                }
-                else  {
+                } else {
                     view?.showProgress(downloadProgress.progress)
                 }
-            }
-           else {
+            } else {
                 view?.hideProgress()
             }
         }

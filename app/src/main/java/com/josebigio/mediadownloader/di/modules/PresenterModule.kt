@@ -1,7 +1,5 @@
 package com.josebigio.mediadownloader.di.modules
 
-import android.app.Activity
-import android.content.Context
 import com.josebigio.mediadownloader.api.ApiManager
 import com.josebigio.mediadownloader.di.PerActivity
 import com.josebigio.mediadownloader.managers.DownloadManager
@@ -10,6 +8,7 @@ import com.josebigio.mediadownloader.mappers.CommentMapper
 import com.josebigio.mediadownloader.mappers.ItemInfoMapper
 import com.josebigio.mediadownloader.presenters.DetailsPresenter
 import com.josebigio.mediadownloader.presenters.SearchPresenter
+import com.josebigio.mediadownloader.providers.CommentsProvider
 import dagger.Module
 import dagger.Provides
 import timber.log.Timber
@@ -29,8 +28,10 @@ class PresenterModule {
 
     @PerActivity
     @Provides
-    fun provideDetailsPresenter(api: ApiManager, commentMapper: CommentMapper, itemInfoMapper: ItemInfoMapper, downloadManager: DownloadManager, fileManager: FileManager): DetailsPresenter {
+    fun provideDetailsPresenter(api: ApiManager, commentsProvider: CommentsProvider
+                                , itemInfoMapper: ItemInfoMapper
+                                , fileManager: FileManager): DetailsPresenter {
         Timber.d("[-DI-] creating DetailsPresenter")
-        return DetailsPresenter(api,commentMapper,itemInfoMapper,fileManager)
+        return DetailsPresenter(api,itemInfoMapper,fileManager,commentsProvider)
     }
 }

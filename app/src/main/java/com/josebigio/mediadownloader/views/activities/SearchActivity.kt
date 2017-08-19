@@ -27,9 +27,6 @@ class SearchActivity : BaseActivity(), SearchView, SearchAdapterDelegate {
     lateinit var presenter: SearchPresenter
     @Singleton
     @Inject
-    lateinit var navigator: Navigator
-    @Singleton
-    @Inject
     lateinit var fileManager: FileManager
 
 

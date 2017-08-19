@@ -14,18 +14,9 @@ class ItemInfoMapper @Inject constructor() {
 
     fun transform(infoResponse: InfoResponse): ItemInfo {
         val result = infoResponse.results
-        val filteredDuration = result.duration.replace(Regex("\\D"),",")
-        val durationArray = filteredDuration.split(Regex(",+"))
-        var duration = result.duration
         val parser    = ISODateTimeFormat.dateTimeParser()
         val publication = parser.parseDateTime(result.publication)
         val formattedPublication = DateTimeFormat.forPattern("MM/dd/yyyy").print(publication)
-        try {
-            duration = "${durationArray[1]}h ${durationArray[2]}m ${durationArray[3]}s"
-        }
-        catch (e: IndexOutOfBoundsException) {
-           Timber.d("Failed to parse duration")
-        }
-        return ItemInfo(result.title,result.description,duration,formattedPublication,result.thumbnails.high.url)
+        return ItemInfo(result.title,result.description,result.duration.replace("PT","").toLowerCase(),formattedPublication,result.thumbnails.high.url)
     }
 }

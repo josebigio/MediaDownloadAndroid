@@ -3,4 +3,5 @@
     <string name="search_for_a_video_on_youtube">Search for a video from youtube</string>
     <string name="loading">loading</string>
     <string name="user_icon">user icon</string>
+    <string name="library">Library</string>
 </resources>

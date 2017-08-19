@@ -3,10 +3,14 @@ package com.josebigio.mediadownloader.views.activities
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.transition.TransitionManager
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.request.ImageRequestBuilder
@@ -16,18 +20,20 @@ import com.josebigio.mediadownloader.models.ItemInfo
 import com.josebigio.mediadownloader.models.comments.CommentsModel
 import com.josebigio.mediadownloader.presenters.DetailsPresenter
 import com.josebigio.mediadownloader.views.adapters.CommentsAdapter
+import com.josebigio.mediadownloader.views.adapters.Delegate
 import com.josebigio.mediadownloader.views.interfaces.DetailsView
 import jp.wasabeef.fresco.processors.BlurPostprocessor
 import kotlinx.android.synthetic.main.details_view.*
 import timber.log.Timber
 import java.io.File
+import java.util.*
 import javax.inject.Inject
 
 
 /**
  * Created by josebigio on 8/2/17.
  */
-class DetailsActivity: BaseActivity(), DetailsView {
+class DetailsActivity: BaseActivity(), DetailsView, Delegate {
 
     companion object {
         fun getCallingIntent(context: Context, id: String): Intent {
@@ -42,7 +48,7 @@ class DetailsActivity: BaseActivity(), DetailsView {
     @Inject
     lateinit var presenter: DetailsPresenter
 
-    private var detailsAdapter = CommentsAdapter()
+    private var detailsAdapter = CommentsAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,8 +81,10 @@ class DetailsActivity: BaseActivity(), DetailsView {
         renderImage(itemInfo.imageUrl)
     }
 
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun renderComments(commentsModel: CommentsModel) {
         detailsAdapter.commentsModel = commentsModel
+        TransitionManager.beginDelayedTransition(detailsRootView)
         detailsAdapter.notifyDataSetChanged()
     }
 
@@ -128,6 +136,11 @@ class DetailsActivity: BaseActivity(), DetailsView {
         intent.setDataAndType(Uri.fromFile(file), "audio/*")
         startActivity(intent)
     }
+
+    override fun onCommentSelected(id: UUID) {
+       presenter.onCommentSelected(id)
+    }
+
 
     fun renderImage(url: String) {
         val imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
