@@ -24,6 +24,7 @@ import com.josebigio.mediadownloader.views.adapters.Delegate
 import com.josebigio.mediadownloader.views.interfaces.DetailsView
 import jp.wasabeef.fresco.processors.BlurPostprocessor
 import kotlinx.android.synthetic.main.details_view.*
+import kotlinx.android.synthetic.main.drawer_container_view.*
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -67,6 +68,9 @@ class DetailsActivity: BaseActivity(), DetailsView, Delegate {
     override fun onPause() {
         super.onPause()
         presenter.onViewInactive()
+    }
+
+    override fun selectDrawerPos() {
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

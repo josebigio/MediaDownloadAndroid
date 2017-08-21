@@ -7,6 +7,5 @@
         android:checked="false"
         android:icon="@drawable/ic_library_music_black_24dp"
         android:title="@string/library" />
-
     </group>
 </menu>

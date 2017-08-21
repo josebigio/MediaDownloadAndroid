@@ -7,6 +7,7 @@ import com.josebigio.mediadownloader.managers.FileManager
 import com.josebigio.mediadownloader.mappers.CommentMapper
 import com.josebigio.mediadownloader.mappers.ItemInfoMapper
 import com.josebigio.mediadownloader.presenters.DetailsPresenter
+import com.josebigio.mediadownloader.presenters.LibraryPresenter
 import com.josebigio.mediadownloader.presenters.SearchPresenter
 import com.josebigio.mediadownloader.providers.CommentsProvider
 import dagger.Module
@@ -33,5 +34,12 @@ class PresenterModule {
                                 , fileManager: FileManager): DetailsPresenter {
         Timber.d("[-DI-] creating DetailsPresenter")
         return DetailsPresenter(api,itemInfoMapper,fileManager,commentsProvider)
+    }
+
+    @PerActivity
+    @Provides
+    fun provideLibraryPresenter(fileManager: FileManager): LibraryPresenter {
+        Timber.d("[-DI-] creating LibraryPresenter")
+        return LibraryPresenter(fileManager)
     }
 }

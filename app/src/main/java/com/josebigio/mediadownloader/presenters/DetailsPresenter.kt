@@ -1,16 +1,14 @@
 package com.josebigio.mediadownloader.presenters
 
 import com.josebigio.mediadownloader.api.ApiManager
-import com.josebigio.mediadownloader.api.models.InfoResponse
-import com.josebigio.mediadownloader.api.models.comments.CommentsResponse
 import com.josebigio.mediadownloader.managers.FileManager
-import com.josebigio.mediadownloader.mappers.CommentMapper
 import com.josebigio.mediadownloader.mappers.ItemInfoMapper
+import com.josebigio.mediadownloader.models.ItemInfo
 import com.josebigio.mediadownloader.models.MediaFile
-import com.josebigio.mediadownloader.models.comments.Comment
 import com.josebigio.mediadownloader.models.comments.CommentsModel
 import com.josebigio.mediadownloader.providers.CommentsProvider
 import com.josebigio.mediadownloader.views.interfaces.DetailsView
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -75,6 +73,12 @@ class DetailsPresenter(val api: ApiManager, val itemInfoMapper: ItemInfoMapper,
         val fileSaveProgressObservable = FileSaveProgressObservable()
         compositeDisposable.addAll(commentsObserver, itemInfoObserver, mediaFileObserver)
         api.getInfo(id)
+                .switchMap {
+                    infoResponse->
+                    val itemInfo = itemInfoMapper.transform(infoResponse)
+                    fileManager.updateOrCreateFile(fileName = itemInfo.title, fileId = id, thumnailUrl = itemInfo.imageUrl)
+                    Flowable.just(itemInfo).toObservable()
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { increaseSpinnerCount() }
@@ -119,7 +123,7 @@ class DetailsPresenter(val api: ApiManager, val itemInfoMapper: ItemInfoMapper,
 
     }
 
-    private inner class ItemInfoObserver : DisposableObserver<InfoResponse>() {
+    private inner class ItemInfoObserver : DisposableObserver<ItemInfo>() {
 
         override fun onError(onError: Throwable?) {
             Timber.e("ERROR GETTING iteminfo $onError")
@@ -129,8 +133,8 @@ class DetailsPresenter(val api: ApiManager, val itemInfoMapper: ItemInfoMapper,
 
         override fun onComplete() {}
 
-        override fun onNext(infoResponse: InfoResponse) {
-            view?.renderItemInfo(itemInfoMapper.transform(infoResponse))
+        override fun onNext(itemInfo: ItemInfo) {
+            view?.renderItemInfo(itemInfo)
             decreaseSpinnerCount()
         }
 

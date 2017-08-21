@@ -4,4 +4,6 @@
     <string name="loading">loading</string>
     <string name="user_icon">user icon</string>
     <string name="library">Library</string>
+    <string name="openDrawer">open drawer</string>
+    <string name="closeDrawer">close drawer</string>
 </resources>
