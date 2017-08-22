@@ -22,6 +22,9 @@ class FileManager(val context: Context, val downloadManager: DownloadManager) {
 
     val progressMap = HashMap<String, BehaviorSubject<DownloadProgress>>()
 
+    init {
+        cleanup()
+    }
 
     fun getOrCreateFile(fileId: String, filePath: String? = null): Observable<MediaFile> {
 
@@ -136,6 +139,20 @@ class FileManager(val context: Context, val downloadManager: DownloadManager) {
             realmObservable.addChangeListener(listener)
             emitter?.onNext(realmObservable)
         }, BackpressureStrategy.LATEST)
+    }
+
+    private fun cleanup() {
+        val realmInstance = Realm.getDefaultInstance()
+        realmInstance.beginTransaction()
+        realmInstance
+                .where(MediaFile::class.java)
+                .findAll().filter({ mediaFile -> mediaFile.filePath == null })
+                .forEach({
+                    mediaFile->
+                    mediaFile.deleteFromRealm()
+                })
+        realmInstance.commitTransaction()
+
     }
 
     data class DownloadProgress(val progress: Int, val waitingForResponse: Boolean, val downloadInProgress: Boolean)
