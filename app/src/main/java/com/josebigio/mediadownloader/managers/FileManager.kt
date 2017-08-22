@@ -2,6 +2,7 @@ package com.josebigio.mediadownloader.managers
 
 import android.content.Context
 import com.josebigio.mediadownloader.models.MediaFile
+import com.josebigio.utils.RXUtils.RetryWithDelay
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -59,6 +60,7 @@ class FileManager(val context: Context, val downloadManager: DownloadManager) {
         downloadManager.startAudioDownload(videoId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
+                .retryWhen(RetryWithDelay(3,1000))
                 .subscribe(
                         {
                             (progress, filePath, isWaitingResponse) ->
